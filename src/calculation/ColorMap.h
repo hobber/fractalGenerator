@@ -16,9 +16,9 @@ public:
 
   ColorMap() {}
 
-  Pixel convert(unsigned short value) const
+  Pixel convert(float value) const
   {
-    return Pixel((value * 10) % 256);   
+    return Pixel(value * 255);   
   }
 
 };

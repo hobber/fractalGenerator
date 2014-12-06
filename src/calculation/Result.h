@@ -24,6 +24,7 @@ class Result { //ColorMap, setValue(x, y, v)
   unsigned int width;
   unsigned int height;
   Histogram histogram;
+  bool histogramIsUpdated;
 
 public:
 
@@ -32,6 +33,7 @@ public:
     this->width = width;
     this->height = height;
     data = new unsigned short[width*height];
+    histogramIsUpdated = false;
   }
 
   ~Result()
@@ -44,21 +46,34 @@ public:
     if(x >= width || y >= height)
       throw new std::out_of_range("Position out of range!");
     data[x + y*width] = value;
+    histogramIsUpdated = false;
   }
 
-  void writeFractalBMP(std::string fileName, const ColorMap &colorMap) const
+  void writeFractalBMP(std::string fileName, const ColorMap &colorMap)
   {
+    if(histogramIsUpdated == false)
+    {
+      histogram.update(data, width * height);
+      histogramIsUpdated = true;
+    }
+
     Pixel image[width*height];
+    const float *accumulation = histogram.getHistogramAccumulation();
 
     for(unsigned int i=0; i<width*height; i++)
-      	image[i] = colorMap.convert(data[i]);
+      	image[i] = colorMap.convert(accumulation[data[i]]);
     
     Bitmap::writeBMP(fileName, width, height, image);
   }
 
   void writeHistogramBMP(std::string fileName, int width, int height, int boarder=5) 
   {
-    histogram.update(data, this->width * this->height);
+    if(histogramIsUpdated == false)
+    {
+      histogram.update(data, this->width * this->height);
+      histogramIsUpdated = true;
+    }
+
     histogram.writeBMP(fileName, width, height, boarder);
   }
 

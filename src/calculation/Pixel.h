@@ -18,7 +18,7 @@ public:
 
   Pixel() : r(0), g(0), b(0)
   {
-    
+
   }
 
   Pixel(unsigned char gray) : r(gray), g(gray), b(gray)
@@ -34,7 +34,7 @@ public:
 
   friend std::ostream& operator << (std::ostream& os, const Pixel& value) 
   {
-    os << (char)value.r << (char)value.g << (char)value.b;
+    os << (char)value.b << (char)value.g << (char)value.r;
     return os;
   }
 };
