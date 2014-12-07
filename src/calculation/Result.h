@@ -33,6 +33,8 @@ public:
     this->width = width;
     this->height = height;
     data = new unsigned short[width*height];
+    for(int i=0; i<width*height; i++)
+      data[i] = 0;
     histogramIsUpdated = false;
   }
 

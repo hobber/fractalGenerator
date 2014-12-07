@@ -73,8 +73,8 @@ public:
   {
     long double scaleX = (long double)(width-2*boarder) / maximumEntry;
     long double scaleY = (long double)(height-2*boarder) / maximumValue;
-    unsigned int barWidth = scaleX > 1.0 ? std::floor(scaleX) : 1;    
-    unsigned int groupSize = scaleX < 1.0 ? std::ceil(1.0 / scaleX) : 1;
+    unsigned int barWidth = scaleX > 1.0 ? floor(scaleX) : 1;    
+    unsigned int groupSize = scaleX < 1.0 ? ceil(1.0 / scaleX) : 1;
     unsigned int widthPlot = maximumEntry * barWidth / groupSize;    
     
     Pixel image[width * height];

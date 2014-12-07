@@ -23,8 +23,9 @@ public:
 
   ColorMap() {
     colors.push_back(std::make_pair(Pixel(255, 0, 0), 0.0));
-    colors.push_back(std::make_pair(Pixel(255, 255, 0),  0.75));
-    colors.push_back(std::make_pair(Pixel(0, 0, 255), 1.0));
+    colors.push_back(std::make_pair(Pixel(255, 255, 0),  0.60));
+    colors.push_back(std::make_pair(Pixel(0, 0, 255), 0.90));
+    colors.push_back(std::make_pair(Pixel(255, 255, 255),  1.0));
   }
 
   Pixel convert(unsigned short value, float accumulation) const
