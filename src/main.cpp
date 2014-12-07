@@ -12,5 +12,6 @@ int main( int argc, const char* argv[] )
   Result result = fractal.calculate(parameters);
   result.writeFractalBMP("fractal.bmp", colorMap);
   result.writeHistogramBMP("histogram.bmp", 266, 200);
+  colorMap.writeBMP("colormap.bmp", 200, 30);
   return 0;
 }

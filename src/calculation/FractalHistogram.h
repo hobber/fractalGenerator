@@ -16,7 +16,7 @@
 
 #include "Pixel.h"
 
-class Histogram {
+class FractalHistogram {
 
   unsigned int histogramm[USHRT_MAX];
   float accumulation[USHRT_MAX];
@@ -30,7 +30,7 @@ class Histogram {
 
 public:
 
-  Histogram() : maximumEntry(0), maximumValue(0), colorBackground(255), 
+  FractalHistogram() : maximumEntry(0), maximumValue(0), colorBackground(255), 
     colorLines(0), colorForeground(100), colorAccumulation(255, 0, 0) 
   {
 
@@ -54,10 +54,12 @@ public:
         maximumValue = histogramm[data[i]];
     }
 
-    unsigned int sum = 0;
-    for(int i=0; i<USHRT_MAX; i++)
+    float sum = 0.0;
+    float total = dataSize - histogramm[0];
+    accumulation[0] = 0.0;
+    for(int i=1; i<USHRT_MAX; i++)
     {            
-      accumulation[i] = (float)sum / (float)dataSize;      
+      accumulation[i] = sum / total;      
       sum += histogramm[i];
     }
   }

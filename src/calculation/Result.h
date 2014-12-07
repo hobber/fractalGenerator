@@ -15,15 +15,15 @@
 
 #include "Bitmap.h"
 #include "ColorMap.h"
-#include "Histogram.h"
+#include "FractalHistogram.h"
 #include "Pixel.h"
 
-class Result { //ColorMap, setValue(x, y, v)
+class Result {
 
   unsigned short *data;
   unsigned int width;
   unsigned int height;
-  Histogram histogram;
+  FractalHistogram histogram;
   bool histogramIsUpdated;
 
 public:
@@ -61,7 +61,7 @@ public:
     const float *accumulation = histogram.getHistogramAccumulation();
 
     for(unsigned int i=0; i<width*height; i++)
-      	image[i] = colorMap.convert(accumulation[data[i]]);
+      	image[i] = colorMap.convert(data[i], accumulation[data[i]]);
     
     Bitmap::writeBMP(fileName, width, height, image);
   }
