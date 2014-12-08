@@ -19,6 +19,7 @@
 class Controller {
 
   static const char INPUT_ENTER = 10;
+  static const char INPUT_BACKSP = 127;
 
   //src: http://stackoverflow.com/questions/421860
   static char getch() {
@@ -71,15 +72,27 @@ public:
     bool commandInputActive = false;
     while(true)
     {      
-      char input = getch();      
+      char input = getch();   
+      //std::cout << (int) input << std::endl;  
 
       if(commandInputActive) 
       {
+        std::cout << input << std::flush;
         if(input == INPUT_ENTER)
         {
-          std::cout << "command: " << command << std::endl;
+          handleCommand(command);
           command = "";
           commandInputActive = false;
+        }
+        else if(input == INPUT_BACKSP)
+        {
+          if(command.length() == 0) 
+          {
+            std::cout << "\b\b\033[K:" << std::flush;
+            continue;
+          }
+          std::cout << "\b\b\033[K" << std::flush;
+          command.resize(command.length()-1);
         }
         else 
         {
@@ -87,7 +100,10 @@ public:
         }
       }
       else if(input == ':')
+      {
         commandInputActive = true;
+        std::cout << ":" << std::flush;
+      }
       else if(input == 'x')
         break;
       else 
@@ -102,22 +118,39 @@ private:
     Result result = fractal->calculate(parameters);
     result.writeFractalBMP("fractal.bmp", colorMap);
     result.writeHistogramBMP("histogram.bmp", 266, 200);
-    colorMap.writeBMP("colormap.bmp", 200, 30);
+    colorMap.writeBMP("colormap.bmp", 200, 30);    
+  }
+
+  void handleCommand(const std::string &command)
+  {
+    if(command.find('=') != std::string::npos)
+    {
+      int p = command.find('=');
+      std::string name = command.substr(0, p);
+      std::string value = command.substr(p+1);    
+      if(parameters.setParameter(name, value) == false)
+        std::cout << "unknown parameter" << std::endl;
+    }
+    else if(command.compare("redraw") == 0)
+      writeFractalBMP();
+    else
+      std::cout << "unknowm command" << std::endl;
   }
 
   void handleInput(char input)
   {
-    if     (input == 'a') parameters.offsetX += deltaX;   //TODO: consider rotation and zoom!!
-    else if(input == 'd') parameters.offsetX -= deltaX;
-    else if(input == 'w') parameters.offsetY += deltaY;
-    else if(input == 's') parameters.offsetY -= deltaY;
+    if     (input == 'a') parameters.move( deltaX, 0.0);//offsetX += deltaX;   //TODO: consider rotation and zoom!!
+    else if(input == 'd') parameters.move(-deltaX, 0.0);//offsetX -= deltaX;
+    else if(input == 'w') parameters.move(0.0,  deltaY);//offsetY += deltaY;
+    else if(input == 's') parameters.move(0.0, -deltaY);//offsetY -= deltaY;
     else if(input == 'e') parameters.rotation += deltaR;
     else if(input == 'q') parameters.rotation -= deltaR;
     else if(input == '+') parameters.zoom *= deltaZ;
     else if(input == '-') parameters.zoom /= deltaZ;
-
-    //TODO: print / store parameters
-    //TODO: change size, deltas with commands
+    else if(input == 'p') parameters.print();
+    else if(input == 'P') parameters.write("parameters.txt");
+    
+    //TODO: change size, deltas, iterations with commands
     //TODO: use history to undo (also commands)
 
     else 
@@ -131,10 +164,18 @@ private:
 
   void printUsage()
   {
-    std::cout << "usage: " << std::endl;
-    std::cout << "  navigation: 'a', 'd', 'w', 's'" << std::endl;
-    std::cout << "  rotation:   'q', 'e'" << std::endl;
-    std::cout << "  zoom:       '+', '-'" << std::endl;
-    std::cout << "  exit:       'x'" << std::endl;
+    std::cout << std::endl;
+    std::cout << "simple commands: " << std::endl;
+    std::cout << "  navigation:       'a', 'd', 'w', 's'" << std::endl;
+    std::cout << "  rotation:         'q', 'e'" << std::endl;
+    std::cout << "  zoom:             '+', '-'" << std::endl;
+    std::cout << "  print parameters: 'p'" << std::endl;
+    std::cout << "  write parameters: 'P'" << std::endl;
+    std::cout << "  exit:             'x'" << std::endl;
+    std::cout << "extended commands:" << std::endl;
+    std::cout << "  :redraw ... redraws fractal" << std::endl;
+    std::cout << "to set following parameters type :<name>=<value>" << std::endl;
+    parameters.printParameterList(2);    
+    std::cout << std::endl;
   }
 };
